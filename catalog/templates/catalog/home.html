@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Our Website{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Our Website!</h1>
+    <p>This is the homepage of our website. Feel free to explore.</p>
+
+    <h2>Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>
+                <h3>{{ product.name }}</h3>
+                <p>Price: {{ product.price }}</p>
+                <p>Description: {{ product.description|slice:":100" }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
