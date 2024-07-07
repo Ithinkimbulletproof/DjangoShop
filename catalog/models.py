@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from catalog.forms import BlogPostForm
+from django.utils.text import slugify
+from django.urls import reverse
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
