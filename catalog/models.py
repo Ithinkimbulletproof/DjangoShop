@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from catalog.forms import BlogPostForm
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
