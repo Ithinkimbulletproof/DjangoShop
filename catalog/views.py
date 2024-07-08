@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic.detail import DetailView
-from .models import BlogPost
-from .forms import BlogPostForm
+from django.utils.text import slugify
+from django.urls import reverse
+from catalog.models import BlogPost
+from catalog.forms import BlogPostForm
 
 class BlogPostListView(View):
     template_name = 'blog_post_list.html'
