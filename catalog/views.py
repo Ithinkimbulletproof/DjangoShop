@@ -6,8 +6,9 @@ from catalog.models import BlogPost
 from catalog.forms import BlogPostForm
 
 
+
 class BlogPostListView(View):
-    template_name = 'blog_post_list.html'
+    template_name = 'catalog/blog_post_list.html'
 
     def get(self, request):
         blog_posts = BlogPost.objects.filter(is_published=True)
