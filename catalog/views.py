@@ -2,8 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.utils.text import slugify
-from .models import BlogPost
-from .forms import BlogPostForm
+from catalog.models import BlogPost
+from catalog.forms import BlogPostForm
 
 
 class BlogPostListView(View):
