@@ -16,9 +16,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
 INSTALLED_APPS = [
     'catalog',
     'django.contrib.admin',
@@ -59,14 +56,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangoshop.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'djangoshop',
+        'NAME': 'django_shop',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
