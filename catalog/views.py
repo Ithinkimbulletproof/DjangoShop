@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.utils.text import slugify
-from catalog.models import BlogPost
+from catalog.models import Product, BlogPost
 from catalog.forms import BlogPostForm
 
 
