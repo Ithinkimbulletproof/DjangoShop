@@ -6,10 +6,61 @@
 <div class="container mt-4">
     <h1>Contact Us</h1>
     <p>You can contact us using the following details:</p>
-    <ul class="list-group">
+    <ul class="list-group mb-4">
         <li class="list-group-item"><strong>Email:</strong> info@example.com</li>
         <li class="list-group-item"><strong>Phone:</strong> 123-456-7890</li>
         <li class="list-group-item"><strong>Address:</strong> 123 Main Street, City, Country</li>
     </ul>
+
+    <h2>Send us a message</h2>
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {{ messages }}
+        </div>
+    {% endif %}
+    <form method="post" action="{% url 'contact' %}" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+            <div class="invalid-feedback">
+                Please enter your name.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">
+                Please enter a valid email address.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+            <div class="invalid-feedback">
+                Please enter your message.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
 </div>
+
+<script>
+    // Bootstrap form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
 {% endblock %}

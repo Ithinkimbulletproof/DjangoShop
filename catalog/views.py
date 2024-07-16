@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Product, BlogPost, Version
 from .forms import ProductForm, BlogPostForm, VersionForm
+from django.contrib import messages
 
 # Home view
 def home(request):
@@ -46,6 +47,10 @@ class ProductDeleteView(DeleteView):
     template_name = 'product_confirm_delete.html'
     success_url = reverse_lazy('product_list')
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Product was successfully deleted.')
+        return super().delete(request, *args, **kwargs)
+
 # Version views
 class VersionCreateView(CreateView):
     model = Version
@@ -53,11 +58,25 @@ class VersionCreateView(CreateView):
     template_name = 'version_form.html'
     success_url = reverse_lazy('product_list')
 
+    def form_valid(self, form):
+        product_id = self.kwargs['product_id']
+        form.instance.product = get_object_or_404(Product, id=product_id)
+        response = super().form_valid(form)
+        if form.instance.is_current:
+            Version.objects.filter(product=form.instance.product).exclude(id=form.instance.id).update(is_current=False)
+        return response
+
 class VersionUpdateView(UpdateView):
     model = Version
     form_class = VersionForm
     template_name = 'version_form.html'
     success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if form.instance.is_current:
+            Version.objects.filter(product=form.instance.product).exclude(id=form.instance.id).update(is_current=False)
+        return response
 
 class VersionDeleteView(DeleteView):
     model = Version
@@ -67,7 +86,7 @@ class VersionDeleteView(DeleteView):
 # BlogPost views
 class BlogPostListView(ListView):
     model = BlogPost
-    template_name = 'blog_post_list.html'
+    template_name = 'catalog/blog_post_list.html'
     context_object_name = 'blog_posts'
 
 class BlogPostDetailView(DetailView):

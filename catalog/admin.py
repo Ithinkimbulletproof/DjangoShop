@@ -5,6 +5,7 @@ from .models import Category, Product, BlogPost, Version
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
+    ordering = ('name',)
 
 class VersionInline(admin.TabularInline):
     model = Version
@@ -16,6 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category',)
     search_fields = ('name', 'description')
     inlines = [VersionInline]
+    ordering = ('name',)
 
     def get_active_version(self, obj):
         active_version = obj.versions.filter(is_current=True).first()
@@ -24,12 +26,16 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'content', 'is_published')
+    list_display = ('title', 'slug', 'is_published', 'created_at', 'view_count')
     list_filter = ('is_published',)
     search_fields = ('title', 'content')
+    prepopulated_fields = {'slug': ('title',)}
+    ordering = ('-created_at',)
 
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):
     list_display = ('product', 'version_number', 'version_name', 'is_current')
     list_filter = ('product', 'is_current')
     search_fields = ('version_number', 'version_name')
+    readonly_fields = ('product',)
+    ordering = ('product', 'version_number')

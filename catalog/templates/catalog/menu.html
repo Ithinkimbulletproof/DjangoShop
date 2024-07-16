@@ -1,19 +1,30 @@
 {% extends "catalog/base.html" %}
 
+{% block title %}Menu{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
+    <h1>Menu</h1>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'home' %}">Home</a>
+            <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                <i class="bi bi-house-door me-2"></i> Home
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+            <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" href="{% url 'product_list' %}">
+                <i class="bi bi-box-seam me-2"></i> Products
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'about' %}">About Us</a>
+            <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                <i class="bi bi-info-circle me-2"></i> About Us
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+            <a class="nav-link d-flex align-items-center {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                <i class="bi bi-envelope me-2"></i> Contact
+            </a>
         </li>
     </ul>
 </div>
