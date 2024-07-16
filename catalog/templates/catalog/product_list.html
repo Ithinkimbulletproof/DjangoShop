@@ -1,17 +1,15 @@
-{% extends "base.html" %}
+{% extends "catalog/base.html" %}
 
-{% block title %}Product List{% endblock %}
+{% block title %}Blog Posts{% endblock %}
 
 {% block content %}
-<h1>Product List</h1>
-<a href="{% url 'product_create' %}">Create New Product</a>
-<ul>
-    {% for product in products %}
-        <li>
-            <a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a>
-            <a href="{% url 'product_update' product.pk %}">Edit</a>
-            <a href="{% url 'product_delete' product.pk %}">Delete</a>
-        </li>
-    {% endfor %}
-</ul>
+    <h1>Blog Posts</h1>
+    <ul>
+        {% for post in blog_posts %}
+            <li>
+                <h2><a href="{% url 'blog_post_detail' post.slug %}">{{ post.title }}</a></h2>
+                <p>{{ post.content|truncatewords:30 }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

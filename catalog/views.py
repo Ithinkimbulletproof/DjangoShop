@@ -39,7 +39,7 @@ class ProductDeleteView(DeleteView):
 # BlogPost views
 class BlogPostListView(ListView):
     model = BlogPost
-    template_name = 'blog_post_list.html'
+    template_name = 'catalog/blog_post_list.html'
     context_object_name = 'blog_posts'
 
 class BlogPostDetailView(DetailView):
