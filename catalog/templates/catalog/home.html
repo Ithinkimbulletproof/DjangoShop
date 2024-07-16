@@ -3,17 +3,23 @@
 {% block title %}Welcome to Our Website{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
     <h1>Welcome to Our Website!</h1>
     <p>This is the homepage of our website. Feel free to explore.</p>
 
     <h2>Products</h2>
-    <ul>
+    <div class="row">
         {% for product in products %}
-            <li>
-                <h3>{{ product.name }}</h3>
-                <p>Price: {{ product.price }}</p>
-                <p>Description: {{ product.description|slice:":100" }}...</p>
-            </li>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">{{ product.name }}</h3>
+                    <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+                    <p class="card-text">{{ product.description|slice:":100" }}...</p>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+</div>
 {% endblock %}

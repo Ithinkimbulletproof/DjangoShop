@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ form.instance.pk|yesno:"Update Version,Create Version" }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ form.instance.pk|yesno:"Update Version,Create Version" }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}

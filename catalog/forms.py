@@ -1,5 +1,5 @@
 from django import forms
-from catalog.models import BlogPost, Product
+from catalog.models import BlogPost, Product, Version
 
 class BlogPostForm(forms.ModelForm):
     class Meta:
@@ -11,3 +11,7 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['name', 'description', 'image', 'category', 'price', 'manufactured_at']
 
+class VersionForm(forms.ModelForm):
+    class Meta:
+        model = Version
+        fields = ['product', 'version_number', 'version_name', 'is_current']

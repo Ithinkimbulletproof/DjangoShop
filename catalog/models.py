@@ -18,8 +18,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='product_images/', default='test_picture.jpg')
-    category = models.CharField(max_length=100,
-                                default='1')
+    category = models.CharField(max_length=100, default='1')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,6 +30,15 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+class Version(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='versions')
+    version_number = models.CharField(max_length=50)
+    version_name = models.CharField(max_length=255)
+    is_current = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.version_name} ({self.version_number})"
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
@@ -55,4 +63,3 @@ class BlogPost(models.Model):
     class Meta:
         verbose_name = "Blog Post"
         verbose_name_plural = "Blog Posts"
-

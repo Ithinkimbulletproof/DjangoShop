@@ -3,11 +3,13 @@
 {% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Blog Post{% endblock %}
 
 {% block content %}
-<h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Blog Post</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
-<a href="{% url 'blog_post_list' %}">Back to list</a>
+<div class="container mt-4">
+    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Blog Post</h1>
+    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'blog_post_list' %}" class="btn btn-secondary">Back to list</a>
+    </form>
+</div>
 {% endblock %}
