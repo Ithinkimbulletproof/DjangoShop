@@ -36,11 +36,19 @@ class ProductCreateView(CreateView):
     template_name = 'product_form.html'
     success_url = reverse_lazy('product_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Product was successfully created.')
+        return super().form_valid(form)
+
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'product_form.html'
     success_url = reverse_lazy('product_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Product was successfully updated.')
+        return super().form_valid(form)
 
 class ProductDeleteView(DeleteView):
     model = Product
@@ -64,6 +72,7 @@ class VersionCreateView(CreateView):
         response = super().form_valid(form)
         if form.instance.is_current:
             Version.objects.filter(product=form.instance.product).exclude(id=form.instance.id).update(is_current=False)
+        messages.success(self.request, 'Version was successfully created.')
         return response
 
 class VersionUpdateView(UpdateView):
@@ -76,12 +85,17 @@ class VersionUpdateView(UpdateView):
         response = super().form_valid(form)
         if form.instance.is_current:
             Version.objects.filter(product=form.instance.product).exclude(id=form.instance.id).update(is_current=False)
+        messages.success(self.request, 'Version was successfully updated.')
         return response
 
 class VersionDeleteView(DeleteView):
     model = Version
     template_name = 'version_confirm_delete.html'
     success_url = reverse_lazy('product_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Version was successfully deleted.')
+        return super().delete(request, *args, **kwargs)
 
 # BlogPost views
 class BlogPostListView(ListView):
@@ -99,13 +113,25 @@ class BlogPostCreateView(CreateView):
     template_name = 'blog_post_form.html'
     success_url = reverse_lazy('blog_post_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Blog post was successfully created.')
+        return super().form_valid(form)
+
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     form_class = BlogPostForm
     template_name = 'blog_post_form.html'
     success_url = reverse_lazy('blog_post_list')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Blog post was successfully updated.')
+        return super().form_valid(form)
+
 class BlogPostDeleteView(DeleteView):
     model = BlogPost
     template_name = 'blog_post_confirm_delete.html'
     success_url = reverse_lazy('blog_post_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Blog post was successfully deleted.')
+        return super().delete(request, *args, **kwargs)
