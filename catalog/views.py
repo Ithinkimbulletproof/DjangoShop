@@ -1,79 +1,64 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from django.views.generic.detail import DetailView
-from django.utils.text import slugify
-from catalog.models import Product, BlogPost
-from catalog.forms import BlogPostForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Product, BlogPost
+from .forms import ProductForm, BlogPostForm
 
+# Home view
+def home(request):
+    products = Product.objects.all()
+    return render(request, 'home.html', {'products': products})
 
+# Product views
+class ProductListView(ListView):
+    model = Product
+    template_name = 'product_list.html'
+    context_object_name = 'products'
 
-class BlogPostListView(View):
-    template_name = 'catalog/blog_post_list.html'
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
 
-    def get(self, request):
-        blog_posts = BlogPost.objects.filter(is_published=True)
-        return render(request, self.template_name,
-                      {'blog_posts': blog_posts})
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'product_form.html'
+    success_url = reverse_lazy('product_list')
 
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'product_form.html'
+    success_url = reverse_lazy('product_list')
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'product_confirm_delete.html'
+    success_url = reverse_lazy('product_list')
+
+# BlogPost views
+class BlogPostListView(ListView):
+    model = BlogPost
+    template_name = 'blog_post_list.html'
+    context_object_name = 'blog_posts'
 
 class BlogPostDetailView(DetailView):
     model = BlogPost
     template_name = 'blog_post_detail.html'
-    context_object_name = 'blog_post'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
 
-    def get_object(self):
-        obj = super().get_object()
-        obj.view_count += 1
-        obj.save()
-        return obj
-
-
-class BlogPostCreateView(View):
+class BlogPostCreateView(CreateView):
+    model = BlogPost
+    form_class = BlogPostForm
     template_name = 'blog_post_form.html'
+    success_url = reverse_lazy('blog_post_list')
 
-    def get(self, request):
-        form = BlogPostForm()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = BlogPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            blog_post = form.save(commit=False)
-            blog_post.slug = slugify(blog_post.title)
-            blog_post.save()
-            return redirect('blog_post_list')
-        return render(request, self.template_name, {'form': form})
-
-
-class BlogPostUpdateView(View):
+class BlogPostUpdateView(UpdateView):
+    model = BlogPost
+    form_class = BlogPostForm
     template_name = 'blog_post_form.html'
+    success_url = reverse_lazy('blog_post_list')
 
-    def get(self, request, pk):
-        blog_post = get_object_or_404(BlogPost, pk=pk)
-        form = BlogPostForm(instance=blog_post)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, pk):
-        blog_post = get_object_or_404(BlogPost, pk=pk)
-        form = BlogPostForm(request.POST, request.FILES,
-                            instance=blog_post)
-        if form.is_valid():
-            form.save()
-            return redirect('blog_post_detail', slug=blog_post.slug)
-        return render(request, self.template_name, {'form': form})
-
-
-class BlogPostDeleteView(View):
+class BlogPostDeleteView(DeleteView):
+    model = BlogPost
     template_name = 'blog_post_confirm_delete.html'
-
-    def get(self, request, pk):
-        blog_post = get_object_or_404(BlogPost, pk=pk)
-        return render(request, self.template_name,
-                      {'blog_post': blog_post})
-
-    def post(self, request, pk):
-        blog_post = get_object_or_404(BlogPost, pk=pk)
-        blog_post.delete()
-        return redirect('blog_post_list')
+    success_url = reverse_lazy('blog_post_list')
