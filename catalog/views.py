@@ -40,6 +40,10 @@ class ProductCreateView(CreateView):
         messages.success(self.request, 'Product was successfully created.')
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error creating the product. Please check the form for errors.')
+        return super().form_invalid(form)
+
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
@@ -49,6 +53,10 @@ class ProductUpdateView(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Product was successfully updated.')
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the product. Please check the form for errors.')
+        return super().form_invalid(form)
 
 class ProductDeleteView(DeleteView):
     model = Product
@@ -117,6 +125,10 @@ class BlogPostCreateView(CreateView):
         messages.success(self.request, 'Blog post was successfully created.')
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error creating the blog post. Please check the form for errors.')
+        return super().form_invalid(form)
+
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     form_class = BlogPostForm
@@ -126,6 +138,10 @@ class BlogPostUpdateView(UpdateView):
     def form_valid(self, form):
         messages.success(self.request, 'Blog post was successfully updated.')
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'There was an error updating the blog post. Please check the form for errors.')
+        return super().form_invalid(form)
 
 class BlogPostDeleteView(DeleteView):
     model = BlogPost

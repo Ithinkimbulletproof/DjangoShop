@@ -26,6 +26,22 @@ class ProductForm(forms.ModelForm):
             'manufactured_at': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        self.validate_prohibited_words(name)
+        return name
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        self.validate_prohibited_words(description)
+        return description
+
+    def validate_prohibited_words(self, text):
+        prohibited_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']
+        for word in prohibited_words:
+            if word in text.lower():
+                raise forms.ValidationError(f"Запрещенное слово '{word}' обнаружено в тексте.")
+
 class VersionForm(forms.ModelForm):
     class Meta:
         model = Version
