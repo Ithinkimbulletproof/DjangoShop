@@ -30,19 +30,20 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'product_detail.html'
 
-class ProductCreateView(CreateView):
-    model = Product
-    form_class = ProductForm
-    template_name = 'product_form.html'
+class VersionCreateView(CreateView):
+    model = Version
+    form_class = VersionForm
+    template_name = 'version_form.html'
     success_url = reverse_lazy('product_list')
 
     def form_valid(self, form):
-        messages.success(self.request, 'Product was successfully created.')
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'There was an error creating the product. Please check the form for errors.')
-        return super().form_invalid(form)
+        product_id = self.kwargs['product_id']
+        form.instance.product = get_object_or_404(Product, id=product_id)
+        response = super().form_valid(form)
+        if form.instance.is_current:
+            Version.objects.filter(product=form.instance.product).exclude(id=form.instance.id).update(is_current=False)
+        messages.success(self.request, 'Version was successfully created.')
+        return response
 
 class ProductUpdateView(UpdateView):
     model = Product

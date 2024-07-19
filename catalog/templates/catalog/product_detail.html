@@ -26,8 +26,8 @@
                     {% if version.is_current %} <span class="badge bg-success">Current</span> {% endif %}
                 </div>
                 <div>
-                    <a href="{% url 'version_update' version.pk %}" class="btn btn-secondary btn-sm">Edit</a>
-                    <a href="{% url 'version_delete' version.pk %}" class="btn btn-danger btn-sm ms-2">Delete</a>
+                    <a href="{% url 'version_update' product.pk version.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="{% url 'version_delete' product.pk version.pk %}" class="btn btn-danger btn-sm ms-2">Delete</a>
                 </div>
             </li>
             {% endfor %}
