@@ -36,6 +36,6 @@ urlpatterns = [
     path('products/<int:product_id>/versions/<int:pk>/edit/', VersionUpdateView.as_view(), name='version_update'),
     path('products/<int:product_id>/versions/<int:pk>/delete/', VersionDeleteView.as_view(), name='version_delete'),
 
-    path('contact/', TemplateView.as_view(template_name='contact.html'), name='contact'),
-    path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
+    path('contact/', TemplateView.as_view(template_name='catalog/contact.html'), name='contact'),
+    path('about/', TemplateView.as_view(template_name='catalog/about.html'), name='about'),
 ]
