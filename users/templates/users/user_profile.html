@@ -1,0 +1,18 @@
+{% extends "catalog/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ user.username }}'s Профиль</h1>
+
+        <div class="profile-info">
+            <h2>Информация о пользователе</h2>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
+        </div>
+
+        <div class="profile-actions">
+            <a href="{% url 'user_update' user.id %}">Редактировать профиль</a>
+            <a href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </div>
+{% endblock content %}

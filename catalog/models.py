@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 from django.urls import reverse
 from django.core.validators import MinValueValidator
+from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -19,6 +20,8 @@ class Category(models.Model):
         ]
 
 class Product(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
     image = models.ImageField(upload_to='product_images/', default='test_picture.jpg')

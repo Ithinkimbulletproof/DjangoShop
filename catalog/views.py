@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Product, BlogPost, Version
 from .forms import ProductForm, BlogPostForm, VersionForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
 # Home view
@@ -10,7 +11,7 @@ def home(request):
     products = Product.objects.all()
     return render(request, 'home.html', {'products': products})
 
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
     model = Product
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
@@ -25,17 +26,18 @@ class ProductListView(ListView):
 
         return context
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('product_list')
 
     def form_valid(self, form):
+        form.instance.owner = self.request.user
         messages.success(self.request, 'Product was successfully created.')
         return super().form_valid(form)
 
@@ -43,7 +45,7 @@ class ProductCreateView(CreateView):
         messages.error(self.request, 'There was an error creating the product. Please check the form for errors.')
         return super().form_invalid(form)
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
@@ -57,7 +59,7 @@ class ProductUpdateView(UpdateView):
         messages.error(self.request, 'There was an error updating the product. Please check the form for errors.')
         return super().form_invalid(form)
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('product_list')
