@@ -98,10 +98,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.example.com'
+EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@example.com'
-EMAIL_HOST_PASSWORD = 'Aa-1234!'
+EMAIL_HOST_USER = 'test.testov.1999@internet.ru'
+EMAIL_HOST_PASSWORD = 'xuA7x6Tqeaah03pgG1p6'
+DEFAULT_FROM_EMAIL = 'test.testov.1999@internet.ru'
 
 LOGIN_URL = "/users/login"

@@ -6,10 +6,11 @@ from .forms import ProductForm, BlogPostForm, VersionForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
+
 # Home view
 def home(request):
     products = Product.objects.all()
-    return render(request, 'home.html', {'products': products})
+    return render(request, 'catalog/home.html', {'products': products})
 
 class ProductListView(LoginRequiredMixin, ListView):
     model = Product

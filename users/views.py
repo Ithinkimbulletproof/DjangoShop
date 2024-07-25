@@ -1,5 +1,7 @@
-from django.views.generic import CreateView, DetailView, UpdateView, View
-from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
+from django.views.generic import (CreateView, DetailView, UpdateView,
+                                  View)
+from django.contrib.auth.views import (LoginView, PasswordChangeView,
+                                       PasswordResetView)
 from django.contrib.auth import update_session_auth_hash
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
@@ -25,7 +27,7 @@ class RegistrationView(CreateView):
         send_mail(
             'Welcome to our site',
             'Thank you for registering.',
-            'from@example.com',
+            'test.testov.1999@internet.ru',
             [form.instance.email],
             fail_silently=False,
         )
@@ -83,9 +85,9 @@ class CombinedPasswordResetView(PasswordResetView):
         send_mail(
             'Password Reset',
             f'Your new password is {new_password}',
-            'from@example.com',
+            'test.testov.1999@internet.ru',
             [email],
-            fail_silently=False,
+            fail_silently=False
         )
 
         request.session['success'] = 'New password sent to your email'
