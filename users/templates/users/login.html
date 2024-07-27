@@ -6,9 +6,9 @@
         <form method="post">
             {% csrf_token %}
             <div>
-                <label for="id_username">Имя пользователя:</label><br>
-                {{ form.username }}<br>
-                <div class="error">{{ form.username.errors }}</div>
+                <label for="id_email">Электронная почта:</label><br>
+                {{ form.email }}<br>
+                <div class="error">{{ form.email.errors }}</div>
             </div><br>
             <div>
                 <label for="id_password">Пароль:</label><br>

@@ -7,12 +7,12 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">Delete Version</h1>
-            <p class="card-text">Are you sure you want to delete the version "<strong>{{ version.version_name }}</strong>"?</p>
+            <p class="card-text">Are you sure you want to delete the version "<strong>{{ version.version_name }}</strong>" of the product "<strong>{{ version.product.name }}</strong>"?</p>
             <form method="post" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Yes, delete</button>
+                <a href="{% url 'product_detail' version.product.pk %}" class="btn btn-secondary ms-2">Cancel</a>
             </form>
-            <a href="{% url 'product_detail' version.product.pk %}" class="btn btn-secondary ms-2">Cancel</a>
         </div>
     </div>
 </div>

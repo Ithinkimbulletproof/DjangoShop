@@ -1,17 +1,17 @@
 {% extends "catalog/base.html" %}
 
-{% block title %}Delete Blog Post{% endblock %}
+{% block title %}Удалить пост{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
     <div class="card">
         <div class="card-body">
-            <h1 class="card-title">Delete Blog Post</h1>
-            <p class="card-text">Are you sure you want to delete "<strong>{{ blog_post.title }}</strong>"?</p>
+            <h1 class="card-title">Удаление поста</h1>
+            <p class="card-text">Вы уверены, что хотите удалить пост "<strong>{{ blog_post.title }}</strong>"?</p>
             <form method="post" class="mt-3">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-danger">Yes, delete</button>
-                <a href="{% url 'blog_post_list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a href="{% url 'blog_post_list' %}" class="btn btn-secondary">Отмена</a>
             </form>
         </div>
     </div>

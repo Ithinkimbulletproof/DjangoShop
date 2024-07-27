@@ -17,34 +17,45 @@ class Category(models.Model):
         verbose_name = "Category"
         verbose_name_plural = "Categories"
         indexes = [
-            models.Index(fields=['name']),
+            models.Index(fields=["name"]),
         ]
 
+
 class Product(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                              on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to='product_images/', default='test_picture.jpg')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    image = models.ImageField(upload_to="product_images/", default="test_picture.jpg")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="products"
+    )
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+    )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     manufactured_at = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.name} - {self.category.name}"
+        return f"{self.name} - {self.category.name} ({'Expensive' if self.is_expensive else 'Affordable'})"
+
+    @property
+    def is_expensive(self):
+        return self.price > 1000
 
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
         indexes = [
-            models.Index(fields=['name']),
-            models.Index(fields=['price']),
+            models.Index(fields=["name"]),
+            models.Index(fields=["price"]),
         ]
 
+
 class Version(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='versions')
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="versions"
+    )
     version_number = models.CharField(max_length=50)
     version_name = models.CharField(max_length=255)
     is_current = models.BooleanField(default=False)
@@ -57,18 +68,25 @@ class Version(models.Model):
             Version.objects.filter(product=self.product).update(is_current=False)
         super().save(*args, **kwargs)
 
+    def check_version(self):
+        if self.is_current:
+            return f"The version {self.version_name} is currently active."
+        else:
+            return f"The version {self.version_name} is not active."
+
     class Meta:
         verbose_name = "Version"
         verbose_name_plural = "Versions"
         indexes = [
-            models.Index(fields=['version_number']),
+            models.Index(fields=["version_number"]),
         ]
+
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
     content = models.TextField()
-    preview_image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
+    preview_image = models.ImageField(upload_to="blog_images/", blank=True, null=True)
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     view_count = models.PositiveIntegerField(default=0)
@@ -79,7 +97,7 @@ class BlogPost(models.Model):
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse('blog_post_detail', kwargs={'slug': self.slug})
+        return reverse("blog_post_detail", kwargs={"slug": self.slug})
 
     def __str__(self):
         return self.title
@@ -88,6 +106,6 @@ class BlogPost(models.Model):
         verbose_name = "Blog Post"
         verbose_name_plural = "Blog Posts"
         indexes = [
-            models.Index(fields=['title']),
-            models.Index(fields=['slug']),
+            models.Index(fields=["title"]),
+            models.Index(fields=["slug"]),
         ]

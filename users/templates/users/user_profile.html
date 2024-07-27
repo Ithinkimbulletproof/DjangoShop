@@ -7,12 +7,22 @@
         <div class="profile-info">
             <h2>Информация о пользователе</h2>
             <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Имя:</strong> {{ user.first_name }}</p>
+            <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
+            <p><strong>Телефон:</strong> {{ user.phone }}</p>
+            <p><strong>Страна:</strong> {{ user.country }}</p>
             <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d-m-Y" }}</p>
+            {% if user.avatar %}
+                <p><strong>Аватар:</strong><br>
+                <img src="{{ user.avatar.url }}" alt="User Avatar" style="max-width: 200px; max-height: 200px;"></p>
+            {% else %}
+                <p><strong>Аватар:</strong> Нет</p>
+            {% endif %}
         </div>
 
         <div class="profile-actions">
-            <a href="{% url 'user_update' user.id %}">Редактировать профиль</a>
-            <a href="{% url 'logout' %}">Выйти</a>
+            <a href="{% url 'user_update' user.id %}" class="btn btn-primary">Редактировать профиль</a>
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Выйти</a>
         </div>
     </div>
-{% endblock content %}
+{% endblock %}
