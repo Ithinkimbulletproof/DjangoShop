@@ -6,10 +6,8 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import RegistrationForm, PasswordChangeForm
+from .forms import RegistrationForm, CustomPasswordChangeForm
 from .models import User
-import random
-import string
 
 
 class UserProfileView(LoginRequiredMixin, DetailView):
@@ -30,37 +28,41 @@ class RegistrationView(CreateView):
         response = super().form_valid(form)
         user = form.instance
         user.generate_verification_code()
-        send_mail(
-            "Email Verification",
-            f"Please verify your email using this code: {user.verification_code}",
-            "noreply@yourdomain.com",
-            [user.email],
-            fail_silently=False,
-        )
+        self.send_verification_email(user)
         messages.success(
             self.request,
-            "Registration successful. Please check your email for the verification code.",
+            "Registration successful. Please check your email to verify your account.",
         )
         return response
 
+    def send_verification_email(self, user):
+        verification_link = f"{settings.SITE_URL}/verify/{user.verification_token}/"
+        subject = "Email Verification"
+        message = render_to_string('users/email_verification.html', {
+            'user': user,
+            'verification_link': verification_link,
+        })
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
 
 class VerifyEmailView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, "users/verify_email.html")
-
-    def post(self, request, *args, **kwargs):
-        email = request.POST.get("email")
-        code = request.POST.get("verification_code")
+    def get(self, request, token, *args, **kwargs):
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(verification_token=token)
         except User.DoesNotExist:
-            messages.error(request, "User not found.")
-            return redirect("verify_email")
+            messages.error(request, "Invalid verification token.")
+            return redirect("login")
 
-        if user.verify_email(code):
-            messages.success(request, "Email verified successfully.")
-        else:
-            messages.error(request, "Invalid verification code.")
+        user.email_verified = True
+        user.verification_token = None
+        user.save()
+        messages.success(request, "Email verified successfully.")
         return redirect("login")
 
 
@@ -92,7 +94,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
-    form_class = PasswordChangeForm
+    form_class = CustomPasswordChangeForm
     template_name = "users/password_change.html"
     success_url = reverse_lazy("password_change_done")
 
@@ -131,7 +133,7 @@ class CombinedPasswordResetView(PasswordResetView):
         send_mail(
             "Password Reset",
             f"Your new password is {new_password}",
-            "noreply@yourdomain.com",
+            settings.DEFAULT_FROM_EMAIL,
             [email],
             fail_silently=False,
         )

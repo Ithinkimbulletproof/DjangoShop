@@ -47,6 +47,7 @@ class RegistrationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
+        user.email_verified = False  # Ensure the email is not verified yet
         if commit:
             user.save()
             self.send_verification_email(user)
