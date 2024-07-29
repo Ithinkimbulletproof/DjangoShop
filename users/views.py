@@ -6,9 +6,12 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
+from django.template.loader import render_to_string
 from .forms import RegistrationForm, CustomPasswordChangeForm
 from .models import User
-
+import random
+import string
 
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
@@ -17,7 +20,6 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user
-
 
 class RegistrationView(CreateView):
     form_class = RegistrationForm
@@ -38,10 +40,13 @@ class RegistrationView(CreateView):
     def send_verification_email(self, user):
         verification_link = f"{settings.SITE_URL}/verify/{user.verification_token}/"
         subject = "Email Verification"
-        message = render_to_string('users/email_verification.html', {
-            'user': user,
-            'verification_link': verification_link,
-        })
+        message = render_to_string(
+            "users/email_verification.html",
+            {
+                "user": user,
+                "verification_link": verification_link,
+            },
+        )
         send_mail(
             subject,
             message,
@@ -49,7 +54,6 @@ class RegistrationView(CreateView):
             [user.email],
             fail_silently=False,
         )
-
 
 class VerifyEmailView(View):
     def get(self, request, token, *args, **kwargs):
@@ -65,10 +69,8 @@ class VerifyEmailView(View):
         messages.success(request, "Email verified successfully.")
         return redirect("login")
 
-
 class CustomLoginView(LoginView):
     template_name = "users/login.html"
-
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
@@ -92,7 +94,6 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, "Profile updated successfully.")
         return response
 
-
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = CustomPasswordChangeForm
     template_name = "users/password_change.html"
@@ -103,7 +104,6 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         update_session_auth_hash(self.request, user)
         messages.success(self.request, "Password changed successfully.")
         return super().form_valid(form)
-
 
 class CombinedPasswordResetView(PasswordResetView):
     template_name = "users/password_reset.html"

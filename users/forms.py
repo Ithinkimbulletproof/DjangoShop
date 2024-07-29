@@ -57,7 +57,7 @@ class RegistrationForm(forms.ModelForm):
         verification_code = "".join(
             random.choices(string.ascii_letters + string.digits, k=32)
         )
-        user.verification_code = verification_code
+        user.verification_token = verification_code
         user.save()
 
         subject = "Activate your account"
