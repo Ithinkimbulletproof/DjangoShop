@@ -1,0 +1,31 @@
+{% extends "catalog/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Подтверждение Email</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% if messages %}
+            <div class="alert alert-info">
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="id_email">Электронная почта:</label>
+            <input type="email" name="email" id="id_email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="id_verification_code">Код подтверждения:</label>
+            <input type="text" name="verification_code" id="id_verification_code" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Подтвердить</button>
+    </form>
+    <div>
+        <a href="{% url 'register' %}">Нет аккаунта? Зарегистрируйтесь</a>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,11 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordChangeForm as AuthPasswordChangeForm,
 )
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User
+import random
+import string
 
 
 class RegistrationForm(forms.ModelForm):
@@ -45,7 +49,25 @@ class RegistrationForm(forms.ModelForm):
         user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
+            self.send_verification_email(user)
         return user
+
+    def send_verification_email(self, user):
+        verification_code = "".join(
+            random.choices(string.ascii_letters + string.digits, k=32)
+        )
+        user.verification_code = verification_code
+        user.save()
+
+        subject = "Activate your account"
+        message = f"Hi {user.username},\n\nPlease use the following link to verify your email address:\n\n{settings.SITE_URL}/verify/{verification_code}/\n\nThank you!"
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
 
 
 class CustomLoginForm(AuthenticationForm):
@@ -57,9 +79,10 @@ class CustomLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget = forms.HiddenInput()
         self.fields["username"].label = "Email"
+        self.fields["username"].initial = self.data.get("email")
 
 
-class PasswordChangeForm(AuthPasswordChangeForm):
+class CustomPasswordChangeForm(AuthPasswordChangeForm):
     old_password = forms.CharField(widget=forms.PasswordInput, label="Old Password")
     new_password = forms.CharField(widget=forms.PasswordInput, label="New Password")
     new_password_confirm = forms.CharField(

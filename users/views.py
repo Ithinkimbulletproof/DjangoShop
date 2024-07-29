@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import RegistrationForm, PasswordChangeForm
 from .models import User
 import random
+import string
 
 
 class UserProfileView(LoginRequiredMixin, DetailView):
@@ -27,17 +28,40 @@ class RegistrationView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        user = form.instance
+        user.generate_verification_code()
         send_mail(
-            "Welcome to our site",
-            "Thank you for registering.",
+            "Email Verification",
+            f"Please verify your email using this code: {user.verification_code}",
             "noreply@yourdomain.com",
-            [form.instance.email],
+            [user.email],
             fail_silently=False,
         )
         messages.success(
-            self.request, "Registration successful. Please check your email."
+            self.request,
+            "Registration successful. Please check your email for the verification code.",
         )
         return response
+
+
+class VerifyEmailView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, "users/verify_email.html")
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get("email")
+        code = request.POST.get("verification_code")
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect("verify_email")
+
+        if user.verify_email(code):
+            messages.success(request, "Email verified successfully.")
+        else:
+            messages.error(request, "Invalid verification code.")
+        return redirect("login")
 
 
 class CustomLoginView(LoginView):
@@ -99,7 +123,7 @@ class CombinedPasswordResetView(PasswordResetView):
             return self.get(request)
 
         new_password = "".join(
-            random.choices("abcdefghijklmnopqrstuvwxyz0123456789", k=8)
+            random.choices(string.ascii_letters + string.digits, k=8)
         )
         user.set_password(new_password)
         user.save()

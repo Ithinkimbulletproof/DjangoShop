@@ -1,27 +1,53 @@
 {% extends "catalog/base.html" %}
 
 {% block content %}
-    <div class="container">
-        <h2>Вход в систему</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div>
-                <label for="id_email">Электронная почта:</label><br>
-                {{ form.email }}<br>
-                <div class="error">{{ form.email.errors }}</div>
-            </div><br>
-            <div>
-                <label for="id_password">Пароль:</label><br>
-                {{ form.password }}<br>
-                <div class="error">{{ form.password.errors }}</div>
-            </div><br>
-            <button type="submit">Войти</button><br>
-        </form>
-        <div>
-            <a href="{% url 'password_reset' %}">Забыли пароль?</a><br>
+<div class="container mt-4">
+    <h2>Вход в систему</h2>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="form-group">
+            <label for="id_email">Электронная почта:</label>
+            {{ form.email|add_class:"form-control" }}
+            {% if form.email.errors %}
+                <div class="form-text text-danger">{{ form.email.errors }}</div>
+            {% endif %}
         </div>
-        <div>
-            <a href="{% url 'register' %}">Нет аккаунта? Зарегистрируйтесь</a><br>
+
+        <div class="form-group mt-3">
+            <label for="id_password">Пароль:</label>
+            {{ form.password|add_class:"form-control" }}
+            {% if form.password.errors %}
+                <div class="form-text text-danger">{{ form.password.errors }}</div>
+            {% endif %}
         </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Войти</button>
+    </form>
+
+    <div class="mt-3">
+        <a href="{% url 'password_reset' %}">Забыли пароль?</a>
     </div>
+    <div class="mt-2">
+        <a href="{% url 'register' %}">Нет аккаунта? Зарегистрируйтесь</a>
+    </div>
+</div>
+
+<script>
+    // Bootstrap form validation
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
 {% endblock %}
