@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
 )
 import uuid
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
@@ -43,7 +44,6 @@ class User(AbstractUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
 
     groups = models.ManyToManyField(
         "auth.Group",

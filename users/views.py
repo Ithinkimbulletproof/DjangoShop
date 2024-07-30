@@ -13,6 +13,7 @@ from .models import User
 import random
 import string
 
+
 class UserProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = "users/user_profile.html"
@@ -20,6 +21,7 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
 
 class RegistrationView(CreateView):
     form_class = RegistrationForm
@@ -37,7 +39,9 @@ class RegistrationView(CreateView):
         return response
 
     def send_verification_email(self, user):
-        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        verification_link = (
+            f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        )
         subject = "Email Verification"
         message = render_to_string(
             "users/email_verification.html",
@@ -53,6 +57,7 @@ class RegistrationView(CreateView):
             [user.email],
             fail_silently=False,
         )
+
 
 class VerifyEmailView(View):
     def get(self, request, token, *args, **kwargs):
@@ -103,6 +108,7 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, "Profile updated successfully.")
         return response
 
+
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = CustomPasswordChangeForm
     template_name = "users/password_change.html"
@@ -113,6 +119,7 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         update_session_auth_hash(self.request, user)
         messages.success(self.request, "Password changed successfully.")
         return super().form_valid(form)
+
 
 class CombinedPasswordResetView(PasswordResetView):
     template_name = "users/password_reset.html"

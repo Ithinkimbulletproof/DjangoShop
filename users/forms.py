@@ -57,8 +57,10 @@ class RegistrationForm(forms.ModelForm):
     def send_verification_email(self, user):
         verification_code = user.verification_token
         subject = "Activate your account"
-        message = (f"Hi {user.username},\n\nPlease use the following "
-                   f"link to verify your email address:\n\n{settings.SITE_URL}/verify/{verification_code}/\n\nThank you!")
+        message = (
+            f"Hi {user.username},\n\nPlease use the following "
+            f"link to verify your email address:\n\n{settings.SITE_URL}/verify/{verification_code}/\n\nThank you!"
+        )
         send_mail(
             subject,
             message,
@@ -85,15 +87,17 @@ class CustomLoginForm(AuthenticationForm):
         self.fields["username"].initial = self.data.get("email")
 
     def clean(self):
-        email = self.cleaned_data.get('email')
-        password = self.cleaned_data.get('password')
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
         if email and password:
-            self.user_cache = authenticate(self.request, username=email, password=password)
+            self.user_cache = authenticate(
+                self.request, username=email, password=password
+            )
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_login'],
-                    code='invalid_login',
-                    params={'username': 'email'},
+                    self.error_messages["invalid_login"],
+                    code="invalid_login",
+                    params={"username": "email"},
                 )
             else:
                 self.confirm_login_allowed(self.user_cache)

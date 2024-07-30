@@ -106,7 +106,6 @@ EMAIL_HOST_PASSWORD = "xuA7x6Tqeaah03pgG1p6"
 DEFAULT_FROM_EMAIL = "test.testov.1999@internet.ru"
 
 LOGIN_URL = "/users/login"
-LOGIN_REDIRECT_URL = 'profile'
+LOGIN_REDIRECT_URL = "profile"
 
 SITE_URL = "http://127.0.0.1:8000"
-
