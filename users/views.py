@@ -1,6 +1,6 @@
 from django.views.generic import CreateView, DetailView, UpdateView, View
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, login
 from django.urls import reverse_lazy
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.conf import settings
 from django.template.loader import render_to_string
-from .forms import RegistrationForm, CustomPasswordChangeForm
+from .forms import RegistrationForm, CustomPasswordChangeForm, CustomLoginForm
 from .models import User
 import random
 import string
@@ -24,12 +24,11 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 class RegistrationView(CreateView):
     form_class = RegistrationForm
     template_name = "users/register.html"
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("home")
 
     def form_valid(self, form):
         response = super().form_valid(form)
         user = form.instance
-        user.generate_verification_code()
         self.send_verification_email(user)
         messages.success(
             self.request,
@@ -38,7 +37,7 @@ class RegistrationView(CreateView):
         return response
 
     def send_verification_email(self, user):
-        verification_link = f"{settings.SITE_URL}/verify/{user.verification_token}/"
+        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
         subject = "Email Verification"
         message = render_to_string(
             "users/email_verification.html",
@@ -64,13 +63,23 @@ class VerifyEmailView(View):
             return redirect("login")
 
         user.email_verified = True
-        user.verification_token = None
         user.save()
         messages.success(request, "Email verified successfully.")
         return redirect("login")
 
+
 class CustomLoginView(LoginView):
+    form_class = CustomLoginForm
     template_name = "users/login.html"
+
+    def get_success_url(self):
+        return reverse_lazy("profile")
+
+    def form_valid(self, form):
+        self.user = form.get_user()
+        login(self.request, self.user)
+        return super(CustomLoginView, self).form_valid(form)
+
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = User
