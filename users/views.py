@@ -39,9 +39,7 @@ class RegistrationView(CreateView):
         return response
 
     def send_verification_email(self, user):
-        verification_link = (
-            f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
-        )
+        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
         subject = "Email Verification"
         message = render_to_string(
             "users/email_verification.html",
@@ -83,7 +81,7 @@ class CustomLoginView(LoginView):
     def form_valid(self, form):
         self.user = form.get_user()
         login(self.request, self.user)
-        return super(CustomLoginView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
@@ -140,9 +138,7 @@ class CombinedPasswordResetView(PasswordResetView):
             request.session["error"] = "User not found"
             return self.get(request)
 
-        new_password = "".join(
-            random.choices(string.ascii_letters + string.digits, k=8)
-        )
+        new_password = "".join(random.choices(string.ascii_letters + string.digits, k=8))
         user.set_password(new_password)
         user.save()
 

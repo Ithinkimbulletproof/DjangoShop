@@ -8,7 +8,6 @@ from .views import (
     CombinedPasswordResetView,
     CustomLoginView,
     VerifyEmailView,
-    LoginView,
 )
 
 urlpatterns = [
@@ -16,7 +15,7 @@ urlpatterns = [
     path("register/", RegistrationView.as_view(), name="register"),
     path("profile/", UserProfileView.as_view(), name="user_profile"),
     path("profile/edit/", UserUpdateView.as_view(), name="user_update"),
-    path('login/', LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('login/', CustomLoginView.as_view(template_name='users/login.html'), name='login'),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path(
         "password_change/", CustomPasswordChangeView.as_view(), name="password_change"
