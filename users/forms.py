@@ -25,6 +25,20 @@ class CustomUserCreationForm(UserCreationForm):
             "password2",
         ]
 
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_active = False  # Make user inactive until they verify their email
+        if commit:
+            user.save()
+            self.send_verification_email(user)
+        return user
+
+    def send_verification_email(self, user):
+        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        subject = "Email Verification"
+        message = f"Please verify your email by clicking the following link: {verification_link}"
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+                  [user.email], fail_silently=False)
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -93,26 +107,3 @@ class RegistrationForm(forms.ModelForm):
 
         return cleaned_data
 
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password"])
-        user.email_verified = False
-        if commit:
-            user.save()
-            self.send_verification_email(user)
-        return user
-
-    def send_verification_email(self, user):
-        verification_code = user.verification_token
-        subject = "Activate your account"
-        message = (
-            f"Hi {user.username},\n\nPlease use the following "
-            f"link to verify your email address:\n\n{settings.SITE_URL}/verify/{verification_code}/\n\nThank you!"
-        )
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )

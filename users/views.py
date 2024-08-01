@@ -60,7 +60,7 @@ class VerifyEmailView(View):
         except User.DoesNotExist:
             message = "Invalid verification token. Please try again."
 
-        return render(request, "verify_email.html", {"message": message})
+        return render(request, "users/verify_email.html", {"message": message})
 
 
 class CustomLoginView(LoginView):
