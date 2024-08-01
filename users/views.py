@@ -7,11 +7,12 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.conf import settings
-from .forms import CustomUserCreationForm, CustomLoginForm, CustomPasswordChangeForm
+from .forms import CustomUserCreationForm, CustomLoginForm, CustomPasswordChangeForm, RegistrationForm
 from .models import User
 
+
 class RegistrationView(CreateView):
-    form_class = CustomUserCreationForm
+    form_class = RegistrationForm
     template_name = "users/register.html"
     success_url = reverse_lazy("login")
 
@@ -19,29 +20,15 @@ class RegistrationView(CreateView):
         response = super().form_valid(form)
         user = form.instance
         self.send_verification_email(user)
-        messages.success(
-            self.request,
-            "Registration successful. Please check your email to verify your account.",
-        )
+        messages.success(self.request, "Registration successful. Please check your email to verify your account.")
         return response
 
     def send_verification_email(self, user):
-        verification_link = f"{settings.SITE_URL}/verify/{user.verification_token}/"
+        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
         subject = "Email Verification"
-        message = render_to_string(
-            "email_verification.html",
-            {
-                "user": user,
-                "verification_link": verification_link,
-            },
-        )
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
+        message = render_to_string("users/email_verification.html", {"user": user, "verification_link": verification_link})
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+
 
 class VerifyEmailView(View):
     def get(self, request, token, *args, **kwargs):
@@ -55,6 +42,7 @@ class VerifyEmailView(View):
 
         return render(request, "verify_email.html", {"message": message})
 
+
 class CustomLoginView(LoginView):
     form_class = CustomLoginForm
     template_name = "users/login.html"
@@ -66,10 +54,12 @@ class CustomLoginView(LoginView):
             return self.form_invalid(form)
         return super().form_valid(form)
 
+
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = CustomPasswordChangeForm
     template_name = "users/password_change_form.html"
     success_url = reverse_lazy("password_change_done")
+
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = "users/password_reset_form.html"
