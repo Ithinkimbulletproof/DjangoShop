@@ -1,13 +1,19 @@
-from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import View, CreateView, UpdateView
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.core.mail import send_mail
-from django.contrib import messages
-from django.template.loader import render_to_string
 from django.conf import settings
-from .forms import CustomUserCreationForm, CustomLoginForm, CustomPasswordChangeForm, RegistrationForm
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, PasswordChangeView, \
+    PasswordResetView
+from django.core.mail import send_mail
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy
+from django.views.generic import View, CreateView
+
+from .forms import (
+    CustomLoginForm,
+    CustomPasswordChangeForm,
+    RegistrationForm,
+)
 from .models import User
 
 
@@ -20,14 +26,28 @@ class RegistrationView(CreateView):
         response = super().form_valid(form)
         user = form.instance
         self.send_verification_email(user)
-        messages.success(self.request, "Registration successful. Please check your email to verify your account.")
+        messages.success(
+            self.request,
+            "Registration successful. Please check your email to verify your account.",
+        )
         return response
 
     def send_verification_email(self, user):
-        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        verification_link = (
+            f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        )
         subject = "Email Verification"
-        message = render_to_string("users/email_verification.html", {"user": user, "verification_link": verification_link})
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
+        message = render_to_string(
+            "users/email_verification.html",
+            {"user": user, "verification_link": verification_link},
+        )
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
 
 
 class VerifyEmailView(View):

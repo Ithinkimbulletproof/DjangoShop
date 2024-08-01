@@ -61,11 +61,21 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput, label="Confirm Password"
+    )
 
     class Meta:
         model = User
-        fields = ["email", "username", "first_name", "last_name", "phone", "country", "avatar"]
+        fields = [
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "phone",
+            "country",
+            "avatar",
+        ]
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
