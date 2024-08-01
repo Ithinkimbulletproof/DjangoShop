@@ -5,7 +5,8 @@ from .models import User
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('email', 'username', 'first_name', 'last_name', 'phone', 'country', 'avatar')
+        fields = ["email", "username", "first_name", "last_name", "phone", "country", "avatar", "password1", "password2"]
+
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -13,8 +14,14 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ('email', 'username', 'first_name', 'last_name', 'phone', 'country', 'avatar')
 
 class CustomLoginForm(AuthenticationForm):
-    username = forms.EmailField(widget=forms.EmailInput(attrs={'autofocus': True}))
-    password = forms.CharField(label="Password", strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}))
+    username = forms.EmailField(widget=forms.EmailInput(attrs={"autofocus": True}))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        user = self.get_user()
+        if user and not user.email_verified:
+            raise forms.ValidationError("Email not verified. Please check your email.")
+        return cleaned_data
 
 class CustomPasswordChangeForm(PasswordChangeForm):
     old_password = forms.CharField(widget=forms.PasswordInput, label="Old Password")
