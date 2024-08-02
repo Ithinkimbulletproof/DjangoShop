@@ -34,11 +34,19 @@ class CustomUserCreationForm(UserCreationForm):
         return user
 
     def send_verification_email(self, user):
-        verification_link = f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        verification_link = (
+            f"{settings.SITE_URL}/users/verify/{user.verification_token}/"
+        )
         subject = "Email Verification"
         message = f"Please verify your email by clicking the following link: {verification_link}"
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
-                  [user.email], fail_silently=False)
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [user.email],
+            fail_silently=False,
+        )
+
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -106,4 +114,3 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match")
 
         return cleaned_data
-
