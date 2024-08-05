@@ -27,7 +27,7 @@ class Product(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to="product_images/", default="test_picture.jpg")
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="products"
+        'Category', on_delete=models.CASCADE, related_name="products"
     )
     price = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
@@ -35,6 +35,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     manufactured_at = models.DateField(default=timezone.now)
+    is_published = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} - {self.category.name} ({'Expensive' if self.is_expensive else 'Affordable'})"
@@ -49,6 +50,11 @@ class Product(models.Model):
         indexes = [
             models.Index(fields=["name"]),
             models.Index(fields=["price"]),
+        ]
+        permissions = [
+            ("can_unpublish_product", "Can unpublish product"),
+            ("can_change_product_description", "Can change product description"),
+            ("can_change_product_category", "Can change product category"),
         ]
 
 

@@ -73,6 +73,14 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         )
         return super().form_invalid(form)
 
+    def test_func(self):
+        product = self.get_object()
+        return self.request.user == product.owner
+
+    def handle_no_permission(self):
+        messages.error(self.request, "You don't have permission to edit this product.")
+        return redirect('product_list')
+
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
