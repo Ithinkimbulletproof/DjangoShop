@@ -17,7 +17,6 @@ from .views import (
     home,
 )
 
-
 urlpatterns = [
     path("", home, name="home"),
     path("blog/", BlogPostListView.as_view(), name="blog_post_list"),
