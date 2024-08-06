@@ -9,7 +9,8 @@ from django.views.generic import (
 from django.urls import reverse_lazy
 from .models import Product, BlogPost, Version
 from .forms import ProductForm, BlogPostForm, VersionForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 
 
@@ -77,9 +78,11 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         product = self.get_object()
         return self.request.user == product.owner
 
-    def handle_no_permission(self):
-        messages.error(self.request, "You don't have permission to edit this product.")
-        return redirect('product_list')
+    def get_object(self, queryset=None):
+        product = super().get_object(queryset)
+        if product.owner != self.request.user:
+            raise PermissionDenied("You do not have permission to edit this product.")
+        return product
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
