@@ -57,7 +57,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "catalog/product_form.html"
@@ -76,11 +76,11 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def test_func(self):
         product = self.get_object()
-        return self.request.user == product.owner
+        return self.request.user == product.owner or self.request.user.has_perm('catalog.can_change_product_description')
 
     def get_object(self, queryset=None):
         product = super().get_object(queryset)
-        if product.owner != self.request.user:
+        if product.owner != self.request.user and not self.request.user.has_perm('catalog.can_change_product_description'):
             raise PermissionDenied("You do not have permission to edit this product.")
         return product
 
