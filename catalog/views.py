@@ -76,11 +76,22 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         product = self.get_object()
-        return self.request.user == product.owner or self.request.user.has_perm('catalog.can_change_product_description')
+        user = self.request.user
+        return (
+            user == product.owner or
+            user.has_perm('catalog.can_change_product_description') or
+            user.has_perm('catalog.can_change_product_category') or
+            user.has_perm('catalog.can_unpublish_product')
+        )
 
     def get_object(self, queryset=None):
         product = super().get_object(queryset)
-        if product.owner != self.request.user and not self.request.user.has_perm('catalog.can_change_product_description'):
+        user = self.request.user
+        if user != product.owner and not (
+            user.has_perm('catalog.can_change_product_description') or
+            user.has_perm('catalog.can_change_product_category') or
+            user.has_perm('catalog.can_unpublish_product')
+        ):
             raise PermissionDenied("You do not have permission to edit this product.")
         return product
 
