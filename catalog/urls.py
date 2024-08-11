@@ -30,7 +30,11 @@ urlpatterns = [
     ),
     path("products/", ProductListView.as_view(), name="product_list"),
     path("products/new/", ProductCreateView.as_view(), name="product_create"),
-    path("products/<int:pk>/", cache_page(60 * 15)(ProductDetailView.as_view()), name="product_detail"),
+    path(
+        "products/<int:pk>/",
+        cache_page(60 * 15)(ProductDetailView.as_view()),
+        name="product_detail",
+    ),
     path("products/<int:pk>/edit/", ProductUpdateView.as_view(), name="product_update"),
     path(
         "products/<int:pk>/delete/", ProductDeleteView.as_view(), name="product_delete"
@@ -58,5 +62,5 @@ urlpatterns = [
     path(
         "about/", TemplateView.as_view(template_name="catalog/about.html"), name="about"
     ),
-    path('categories/', CategoryListView.as_view(), name='category_list'),
+    path("categories/", CategoryListView.as_view(), name="category_list"),
 ]

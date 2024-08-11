@@ -80,19 +80,19 @@ class ProductUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         product = self.get_object()
         user = self.request.user
         return (
-            user == product.owner or
-            user.has_perm('catalog.can_change_product_description') or
-            user.has_perm('catalog.can_change_product_category') or
-            user.has_perm('catalog.can_unpublish_product')
+            user == product.owner
+            or user.has_perm("catalog.can_change_product_description")
+            or user.has_perm("catalog.can_change_product_category")
+            or user.has_perm("catalog.can_unpublish_product")
         )
 
     def get_object(self, queryset=None):
         product = super().get_object(queryset)
         user = self.request.user
         if user != product.owner and not (
-            user.has_perm('catalog.can_change_product_description') or
-            user.has_perm('catalog.can_change_product_category') or
-            user.has_perm('catalog.can_unpublish_product')
+            user.has_perm("catalog.can_change_product_description")
+            or user.has_perm("catalog.can_change_product_category")
+            or user.has_perm("catalog.can_unpublish_product")
         ):
             raise PermissionDenied("You do not have permission to edit this product.")
         return product
@@ -210,9 +210,10 @@ class BlogPostDeleteView(DeleteView):
         messages.success(request, "Blog post was successfully deleted.")
         return super().delete(request, *args, **kwargs)
 
+
 class CategoryListView(ListView):
-    template_name = 'catalog/category_list.html'
-    context_object_name = 'categories'
+    template_name = "catalog/category_list.html"
+    context_object_name = "categories"
 
     def get_queryset(self):
         return get_cached_categories()
