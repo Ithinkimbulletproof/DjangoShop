@@ -12,6 +12,7 @@ from .forms import ProductForm, BlogPostForm, VersionForm
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from .services import get_cached_categories
 
 
 # Home view
@@ -27,6 +28,7 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["categories"] = get_cached_categories()
         for product in context["products"]:
             active_version = product.versions.filter(is_current=True).first()
             product.active_version = active_version
@@ -207,3 +209,10 @@ class BlogPostDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Blog post was successfully deleted.")
         return super().delete(request, *args, **kwargs)
+
+class CategoryListView(ListView):
+    template_name = 'catalog/category_list.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        return get_cached_categories()
